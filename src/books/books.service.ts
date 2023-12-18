@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Book } from '@prisma/client';
+import { Book, UserOnBooks } from '@prisma/client';
 
 @Injectable()
 export class BooksService {
@@ -53,5 +53,21 @@ export class BooksService {
         throw new ConflictException('Title is already taken');
       else throw '404 Bad request';
     }
+  }
+
+  public async addToFav(favBookData: Omit<UserOnBooks, 'id'>): Promise<Book> {
+    const { userId, bookId } = favBookData;
+    return await this.prismaService.book.update({
+      where: { id: bookId },
+      data: {
+        users: {
+          create: {
+            user: {
+              connect: { id: userId },
+            },
+          },
+        },
+      },
+    });
   }
 }

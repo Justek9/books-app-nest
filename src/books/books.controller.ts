@@ -46,6 +46,12 @@ export class BooksController {
     return this.booksService.create(bookData);
   }
 
+  @Post('/like')
+  @UseGuards(JwtAuthGuard)
+  addTofav(@Body() favBookData) {
+    return this.booksService.addToFav(favBookData);
+  }
+
   @Put('/:id')
   @UseGuards(JwtAuthGuard)
   async update(
